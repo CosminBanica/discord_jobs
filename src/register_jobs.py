@@ -6,6 +6,7 @@ from src.jobs.release_countdown import SteamReleaseCountdownJob
 
 # CONSTANTS
 PLAYER_COUNT_WEBHOOK_URL = os.getenv("PLAYER_COUNT_WEBHOOK_URL")  # Set this in your environment variables
+RELEASE_COUNTDOWN_WEBHOOK_URL = os.getenv("RELEASE_COUNTDOWN_WEBHOOK_URL")  # Set this in your environment variables
 JOBS_CONFIG = os.getenv("JOBS_CONFIG")  # Should be a JSON string
 
 JOBS = []
@@ -19,6 +20,6 @@ if JOBS_CONFIG:
             if job_type == "player_count":
                 JOBS.append(SteamPlayerCountJob(PLAYER_COUNT_WEBHOOK_URL, app_id, game_name))
             elif job_type == "release_countdown":
-                JOBS.append(SteamReleaseCountdownJob(PLAYER_COUNT_WEBHOOK_URL, app_id, game_name))
+                JOBS.append(SteamReleaseCountdownJob(RELEASE_COUNTDOWN_WEBHOOK_URL, app_id, game_name))
     except Exception as e:
         print(f"Error parsing JOBS_CONFIG: {e}")
