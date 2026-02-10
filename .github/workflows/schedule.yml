@@ -20,6 +20,7 @@ jobs:
       - name: Run player count job
         env:
           PLAYER_COUNT_WEBHOOK_URL: ${{ secrets.PLAYER_COUNT_WEBHOOK_URL }}
+          JOBS_CONFIG: ${{ secrets.JOBS_CONFIG }}
         run: uv run main.py --interval hourly
 
   release-countdown:
@@ -35,5 +36,6 @@ jobs:
         run: pip install uv
       - name: Run release countdown job
         env:
-          PLAYER_COUNT_WEBHOOK_URL: ${{ secrets.PLAYER_COUNT_WEBHOOK_URL }}
+          RELEASE_COUNTDOWN_WEBHOOK_URL: ${{ secrets.RELEASE_COUNTDOWN_WEBHOOK_URL }}
+          JOBS_CONFIG: ${{ secrets.JOBS_CONFIG }}
         run: uv run main.py --interval daily
