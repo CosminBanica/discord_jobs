@@ -1,13 +1,13 @@
 name: Steam Tracker
 on:
   schedule:
-    - cron: '0 * * * *'    # Every hour (player count)
+    - cron: '0 */6 * * *'    # Every 6 hours (player count)
     - cron: '0 8 * * *'    # Every day at 08:00 UTC (release countdown)
   workflow_dispatch:
 
 jobs:
   player-count:
-    if: github.event.schedule == '0 * * * *' || github.event_name == 'workflow_dispatch'
+    if: github.event.schedule == '0 */6 * * *' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -21,7 +21,7 @@ jobs:
         env:
           PLAYER_COUNT_WEBHOOK_URL: ${{ secrets.PLAYER_COUNT_WEBHOOK_URL }}
           JOBS_CONFIG: ${{ secrets.JOBS_CONFIG }}
-        run: uv run main.py --interval hourly
+        run: uv run main.py --interval 6h
 
   release-countdown:
     if: github.event.schedule == '0 8 * * *' || github.event_name == 'workflow_dispatch'
@@ -38,4 +38,4 @@ jobs:
         env:
           RELEASE_COUNTDOWN_WEBHOOK_URL: ${{ secrets.RELEASE_COUNTDOWN_WEBHOOK_URL }}
           JOBS_CONFIG: ${{ secrets.JOBS_CONFIG }}
-        run: uv run main.py --interval daily
+        run: uv run main.py --interval 1d

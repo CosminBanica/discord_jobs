@@ -4,7 +4,7 @@ from src.jobs.job_base import Job
 
 
 class SteamReleaseCountdownJob(Job):
-    interval = 'daily'
+    interval = '1d'
 
     def __init__(self, webhook_url: str, app_id: str, game_name: str):
         self.webhook_url = webhook_url

@@ -5,7 +5,7 @@ from src.register_jobs import JOBS
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run Discord jobs by interval.")
-    parser.add_argument('--interval', choices=['hourly', 'daily'], required=False, help='Which interval jobs to run')
+    parser.add_argument('--interval', choices=['6h', '1d'], required=False, help='Which interval jobs to run')
     args = parser.parse_args()
 
     interval = args.interval
