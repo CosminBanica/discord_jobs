@@ -4,40 +4,66 @@ This repository provides a simple framework for running automated jobs that upda
 
 ## Project Structure
 
-``` python
-main.py                  # Entry point for running all jobs
+```
+main.py                  # Entry point for running jobs
 src/
-    register_jobs.py       # Registers and configures all jobs
+    register_jobs.py       # Dynamically loads jobs from environment config
     jobs/
         job_base.py          # Abstract base class for jobs
-        player_count.py      # Example job: posts Steam player count to Discord
+        player_count.py      # Steam player count job
+        release_countdown.py # Steam release countdown job
+.env                     # Local environment variables (not committed)
 README.md                # This file
 ```
 
 ### How It Works
 
 1. Jobs are defined as classes inheriting from `Job` (see `src/jobs/job_base.py`).
-2. Each job implements a `run()` method containing its logic.
-3. Jobs are instantiated and added to the `JOBS` list in `src/register_jobs.py`.
-4. Running `main.py` executes the `run()` method of each job in the list.
+2. Jobs are dynamically loaded from a JSON configuration in the `JOBS_CONFIG` environment variable.
+3. Each job type (player count, release countdown) is specified in the config with its Steam App ID and game name.
+4. Running `main.py` with an interval argument executes only the jobs for that interval (`6h` or `1d`).
 
-#### Environment Variables
+## Dynamic Job Configuration
 
-Set the following environment variable before running:
+You can add, remove, or modify jobs without changing the code by editing the `JOBS_CONFIG` environment variable. This can be set in your `.env` file for local development or as a GitHub Actions secret for CI/CD.
 
-- `PLAYER_COUNT_WEBHOOK_URL`: The Discord webhook URL where updates for Steam player count will be posted.
+**Example `JOBS_CONFIG` value:**
 
-### Running locally
-
-Just run with uv:
-
-``` bash
-uv run main.py
+```text
+[{"type": "player_count", "app_id": "4128260", "game_name": "Highguard"}, {"type": "release_countdown", "app_id": "3065800", "game_name": "Marathon"}]
 ```
+
+## Environment Variables
+
+- `PLAYER_COUNT_WEBHOOK_URL`: The Discord webhook URL where updates will be posted.
+- `RELEASE_COUNTDOWN_WEBHOOK_URL`: The Discord webhook URL for release countdown updates.
+- `JOBS_CONFIG`: JSON array of job definitions (see above).
+
+## Running Locally
+
+1. Create a `.env` file in the project root:
+
+    ```text
+    PLAYER_COUNT_WEBHOOK_URL=your_webhook_url_here
+    RELEASE_COUNTDOWN_WEBHOOK_URL=your_webhook_url_here
+    JOBS_CONFIG=[{"type": "player_count", "app_id": "4128260", "game_name": "Highguard"}, {"type": "release_countdown", "app_id": "3065800", "game_name": "Marathon"}]
+    ```
+
+2. Run with uv (or python) and specify the type of jobs to run, by their interval:
+
+    ```bash
+    uv run main.py --interval 6h   # For 6-hour jobs (e.g., player count)
+    uv run main.py --interval 1d    # For daily jobs (e.g., release countdown)
+    ```
+
+    or just run all jobs:
+
+    ```bash
+    uv run main.py
+    ```
 
 ### Adding New Jobs
 
-1. Create a new class in `src/jobs/` that inherits from `Job` and implements the `run()` method.
-2. Import and instantiate your job in `src/register_jobs.py`, adding it to the `JOBS` list.
+Create a new class in `src/jobs/` that inherits from `Job` and implements the `run()` method.
 
 ---
