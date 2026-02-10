@@ -1,0 +1,21 @@
+name: Steam Tracker
+on:
+  schedule:
+    - cron: '0 * * * *'  # Every hour
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install uv
+        run: pip install uv
+      - name: Run script
+        env:
+          PLAYER_COUNT_WEBHOOK_URL: ${{ secrets.PLAYER_COUNT_WEBHOOK_URL }}
+        run: uv run main.py
