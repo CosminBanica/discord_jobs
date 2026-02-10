@@ -1,12 +1,24 @@
 import os
+import json
 
-from src.jobs.player_count import PlayerCountJob
+from src.jobs.player_count import SteamPlayerCountJob
+from src.jobs.release_countdown import SteamReleaseCountdownJob
 
 # CONSTANTS
 PLAYER_COUNT_WEBHOOK_URL = os.getenv("PLAYER_COUNT_WEBHOOK_URL")  # Set this in your environment variables
-HIGHGUARD_APP_ID = "4128260"  # Replace with your game's Steam App ID
-HIGHGUARD_GAME_NAME = "Highguard"  # Replace with your game name
+JOBS_CONFIG = os.getenv("JOBS_CONFIG")  # Should be a JSON string
 
-JOBS = [
-    PlayerCountJob(PLAYER_COUNT_WEBHOOK_URL, HIGHGUARD_APP_ID, HIGHGUARD_GAME_NAME),
-]
+JOBS = []
+if JOBS_CONFIG:
+    try:
+        jobs_data = json.loads(JOBS_CONFIG)
+        for job_def in jobs_data:
+            job_type = job_def.get("type")
+            app_id = job_def.get("app_id")
+            game_name = job_def.get("game_name")
+            if job_type == "player_count":
+                JOBS.append(SteamPlayerCountJob(PLAYER_COUNT_WEBHOOK_URL, app_id, game_name))
+            elif job_type == "release_countdown":
+                JOBS.append(SteamReleaseCountdownJob(PLAYER_COUNT_WEBHOOK_URL, app_id, game_name))
+    except Exception as e:
+        print(f"Error parsing JOBS_CONFIG: {e}")

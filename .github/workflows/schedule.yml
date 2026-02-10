@@ -1,11 +1,13 @@
 name: Steam Tracker
 on:
   schedule:
-    - cron: '0 * * * *'  # Every hour
-  workflow_dispatch:  # Manual trigger
+    - cron: '0 * * * *'    # Every hour (player count)
+    - cron: '0 8 * * *'    # Every day at 08:00 UTC (release countdown)
+  workflow_dispatch:
 
 jobs:
-  run:
+  player-count:
+    if: github.event.schedule == '0 * * * *' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -15,7 +17,23 @@ jobs:
           python-version: '3.x'
       - name: Install uv
         run: pip install uv
-      - name: Run script
+      - name: Run player count job
         env:
           PLAYER_COUNT_WEBHOOK_URL: ${{ secrets.PLAYER_COUNT_WEBHOOK_URL }}
-        run: uv run main.py
+        run: uv run main.py --interval hourly
+
+  release-countdown:
+    if: github.event.schedule == '0 8 * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install uv
+        run: pip install uv
+      - name: Run release countdown job
+        env:
+          PLAYER_COUNT_WEBHOOK_URL: ${{ secrets.PLAYER_COUNT_WEBHOOK_URL }}
+        run: uv run main.py --interval daily
