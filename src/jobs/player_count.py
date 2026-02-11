@@ -23,7 +23,7 @@ def send_to_discord(message: str, webhook_url: str, game_name: str, players: int
 
 
 class SteamPlayerCountJob(Job):
-    interval = '6h'
+    interval = '12h'
 
     def __init__(self, webhook_url: str, app_id: str, game_name: str):
         self.webhook_url = webhook_url

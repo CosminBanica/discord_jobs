@@ -21,7 +21,7 @@ README.md                # This file
 1. Jobs are defined as classes inheriting from `Job` (see `src/jobs/job_base.py`).
 2. Jobs are dynamically loaded from a JSON configuration in the `JOBS_CONFIG` environment variable.
 3. Each job type (player count, release countdown) is specified in the config with its Steam App ID and game name.
-4. Running `main.py` with an interval argument executes only the jobs for that interval (`6h` or `1d`).
+4. Running `main.py` with an interval argument executes only the jobs for that interval (`12h` or `1d`).
 
 ## Dynamic Job Configuration
 
@@ -52,7 +52,7 @@ You can add, remove, or modify jobs without changing the code by editing the `JO
 2. Run with uv (or python) and specify the type of jobs to run, by their interval:
 
     ```bash
-    uv run main.py --interval 6h   # For 6-hour jobs (e.g., player count)
+    uv run main.py --interval 12h   # For 12-hour jobs (e.g., player count)
     uv run main.py --interval 1d    # For daily jobs (e.g., release countdown)
     ```
 
